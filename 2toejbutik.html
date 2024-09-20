@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diegoz Tøjbutik</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header */
+        header {
+            background-color: #333;
+            padding: 20px;
+            color: white;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header h1 {
+            font-size: 4em;
+            margin: 0;
+            animation: colorChange 3s infinite alternate;
+        }
+
+        @keyframes colorChange {
+            0% { color: #fff; }
+            50% { color: #999; }
+            100% { color: #333; }
+        }
+
+        /* Navigation */
+        nav {
+            margin: 10px 0;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 1.2em;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        /* Cart icon */
+        .cart-icon {
+            position: absolute;
+            top: 30px;
+            right: 20px;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+
+        /* Product grid */
+        .product-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 50px;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .product-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+            overflow: hidden;
+            height: 500px;
+        }
+
+        .product-card img {
+            width: 100%;
+            height: auto;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 15px;
+        }
+
+        .product-card h3 {
+            font-size: 1.4em;
+            color: #333;
+            margin: 15px 0;
+        }
+
+        .product-card p {
+            font-size: 1.1em;
+            color: #666;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .modal-content img {
+            width: 100%;
+            height: auto;
+            border-radius: 15px;
+            max-height: 400px;
+            object-fit: contain;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #333;
+        }
+
+        /* Arrow buttons */
+        .prev, .next {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            width: auto;
+            padding: 10px;
+            color: #333;
+            font-weight: bold;
+            font-size: 20px;
+            user-select: none;
+            transition: 0.6s ease;
+        }
+
+        .prev {
+            left: 10px;
+        }
+
+        .next {
+            right: 10px;
+        }
+
+        .prev:hover, .next:hover {
+            color: #555;
+        }
+
+        .buy-button {
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 1em;
+        }
+
+        .buy-button:hover {
+            background-color: #555;
+        }
+
+        .cart-count {
+            background-color: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            padding: 5px 10px;
+            font-size: 0.9em;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        /* Cart section */
+        #cart-section {
+            display: none;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        #cart-items {
+            list-style: none;
+            padding: 0;
+        }
+
+        #cart-items li {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        /* Footer with pattern */
+        footer {
+            background: #333;
+            padding: 100px 0 60px 0;
+            position: relative;
+            text-align: center;
+            color: white;
+        }
+
+        footer:before {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 30px;
+            background: repeating-linear-gradient(
+                45deg,
+                #333,
+                #333 10px,
+                #444 10px,
+                #444 20px
+            );
+            position: absolute;
+            top: -30px;
+        }
+
+        footer p {
+            font-size: 1em;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1>Diegoz</h1>
+        <nav>
+            <a href="#om-os">Om os</a>
+            <a href="#">Kontakt</a>
+            <a href="#">Produkter</a>
+        </nav>
+        <div class="cart-icon" onclick="toggleCart()">
+            🛒 Indkøbskurv (<span id="cart-count" class="cart-count">0</span>)
+        </div>
+    </header>
+
+    <!-- Product grid -->
+    <section class="product-container">
+        <!-- Product 1: T-shirt -->
+        <div class="product-card" onclick="openModal('modal1')">
+            <img src="https://i.imgur.com/am4Yanp.jpg" alt="T-shirt Forside">
+            <h3>T-shirt</h3>
+            <p>199 kr.</p>
+        </div>
+
+        <!-- Modal for product 1 -->
+        <div id="modal1" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('modal1')">&times;</span>
+                <img id="modal-img1" src="https://i.imgur.com/am4Yanp.jpg" alt="T-shirt Forside">
+                <h3>T-shirt</h3>
+                <p>En lækker bomuldstrøje, perfekt til hverdagsbrug.</p>
+                <p>Pris: 199 kr.</p>
+                <button class="buy-button" onclick="addToCart('T-shirt', 199)">Tilføj til kurv</button>
+                <a class="prev" onclick="changeImage('modal1', -1)">&#10094;</a>
+                <a class="next" onclick="changeImage('modal1', 1)">&#10095;</a>
+            </div>
+        </div>
+
+        <!-- Product 2: Hættetrøje -->
+        <div class="product-card" onclick="openModal('modal2')">
+            <img src="https://i.imgur.com/vy54jOK.jpg" alt="Hættetrøje">
+            <h3>Hættetrøje</h3>
+            <p>299 kr.</p>
+        </div>
+
+        <!-- Modal for product 2 -->
+        <div id="modal2" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('modal2')">&times;</span>
+                <img id="modal-img2" src="https://i.imgur.com/vy54jOK.jpg" alt="Hættetrøje">
+                <h3>Hættetrøje</h3>
+                <p>En komfortabel hættetrøje til både afslapning og sport.</p>
+                <p>Pris: 299 kr.</p>
+                <button class="buy-button" onclick="addToCart('Hættetrøje', 299)">Tilføj til kurv</button>
+                <a class="prev" onclick="changeImage('modal2', -1)">&#10094;</a>
+                <a class="next" onclick="changeImage('modal2', 1)">&#10095;</a>
+            </div>
+        </div>
+
+        <!-- Product 3: Jakke -->
+        <div class="product-card" onclick="openModal('modal3')">
+            <img src="https://i.imgur.com/am4Yanp.jpg" alt="Jakke">
+            <h3>Jakke</h3>
+            <p>499 kr.</p>
+        </div>
+
+        <!-- Modal for product 3 -->
+        <div id="modal3" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('modal3')">&times;</span>
+                <img id="modal-img3" src="https://i.imgur.com/am4Yanp.jpg" alt="Jakke">
+                <h3>Jakke</h3>
+                <p>En varm jakke til de kolde dage.</p>
+                <p>Pris: 499 kr.</p>
+                <button class="buy-button" onclick="addToCart('Jakke', 499)">Tilføj til kurv</button>
+                <a class="prev" onclick="changeImage('modal3', -1)">&#10094;</a>
+                <a class="next" onclick="changeImage('modal3', 1)">&#10095;</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart section -->
+    <section id="cart-section">
+        <h2>Indkøbskurv</h2>
+        <ul id="cart-items"></ul>
+        <p>Total: <span id="cart-total">0 kr.</span></p>
+    </section>
+
+    <!-- Om os section -->
+    <section id="om-os" style="padding: 40px;">
+        <h2>Om os</h2>
+        <p>Velkommen til Diegoz Tøjbutik! Vi tilbyder et bredt udvalg af tøj til både hverdag og fest. Hos os finder du tøj til enhver smag og årstid, fra t-shirts og hættetrøjer til varme jakker. Vi fokuserer på kvalitet, komfort og stil, så du altid kan føle dig godt tilpas i vores produkter. Vi stræber efter at give vores kunder den bedste service og de nyeste trends til overkommelige priser.</p>
+        <p>Tøv ikke med at kontakte os, hvis du har spørgsmål eller brug for hjælp. Vi er her for at sikre, at du får en fantastisk shoppingoplevelse!</p>
+    </section>
+
+    <!-- Footer with pattern -->
+    <footer>
+        &copy; 2024 Diegoz Tøjbutik
+        <p>Tøj til alle sæsoner</p>
+    </footer>
+
+    <script>
+        let cart = [];
+
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = "flex";
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = "none";
+        }
+
+        function changeImage(modalId, direction) {
+            const images = {
+                modal1: ['https://i.imgur.com/am4Yanp.jpg', 'https://i.imgur.com/vy54jOK.jpg'],
+                modal2: ['https://i.imgur.com/vy54jOK.jpg', 'https://i.imgur.com/am4Yanp.jpg'],
+                modal3: ['https://i.imgur.com/am4Yanp.jpg', 'https://i.imgur.com/vy54jOK.jpg']
+            };
+            const modalImg = document.getElementById(`modal-img${modalId.charAt(modalId.length - 1)}`);
+            let currentIndex = images[modalId].indexOf(modalImg.src);
+            currentIndex = (currentIndex + direction + images[modalId].length) % images[modalId].length;
+            modalImg.src = images[modalId][currentIndex];
+        }
+
+        function addToCart(productName, price) {
+            cart.push({ name: productName, price: price });
+            updateCartDisplay();
+            alert(`${productName} er tilføjet til kurven for ${price} kr.`);
+        }
+
+        function updateCartDisplay() {
+            let cartCount = cart.length;
+            let cartTotal = cart.reduce((total, item) => total + item.price, 0);
+            document.getElementById("cart-count").innerText = cartCount;
+            document.getElementById("cart-total").innerText = `${cartTotal} kr.`;
+
+            const cartItemsElement = document.getElementById("cart-items");
+            cartItemsElement.innerHTML = "";
+            cart.forEach(item => {
+                const listItem = document.createElement("li");
+                listItem.innerHTML = `${item.name}: ${item.price} kr.`;
+                cartItemsElement.appendChild(listItem);
+            });
+        }
+
+        function toggleCart() {
+            const cartSection = document.getElementById("cart-section");
+            cartSection.style.display = cartSection.style.display === "none" ? "block" : "none";
+        }
+    </script>
+</body>
+</html>
